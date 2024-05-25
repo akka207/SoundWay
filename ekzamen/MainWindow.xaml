@@ -1,0 +1,774 @@
+﻿<Window x:Class="soundway.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:soundway"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:CustomControls="clr-namespace:soundway.CustomControls"
+        mc:Ignorable="d"
+        Title="SoundWay" WindowStartupLocation="CenterScreen" Height="450" MinHeight="250" MinWidth="890" MaxWidth="890" Icon="/Icons/logo.ico">
+
+
+
+    <Window.Resources>
+        <FontFamily x:Key="Inter">pack://application:,,,/Fonts/#Inter</FontFamily>
+
+        <local:TextToVisibilityConverter x:Key="textToVisibilityConverter"/>
+        <local:BoolToVisibilityConverter x:Key="boolToVisibilityConverter"/>
+        <local:OrOperatorMultiConverter x:Key="orOperatorMultiConverter"/>
+        <local:VisibilityNotOperatorConverter x:Key="visibilityNotOperatorConverter"/>
+        <local:AndOperatorMultiConverter x:Key="andOperatorMultiConverter"/>
+        <local:DurationTextToTextConverter x:Key="durationTextToTextConverter"/>
+        <local:DoubleToTimeConverter x:Key="doubleToTimeConverter"/>
+        <local:SizeDecreaserValueConverter x:Key="sizeDecreaserValueConverter"/>
+        <local:LikeButtonVisibilityMultiConverter x:Key="likeButtonVisibilityMultiConverter"/>
+
+        <sys:Boolean x:Key="True">True</sys:Boolean>
+        <sys:Boolean x:Key="False">False</sys:Boolean>
+
+
+        <!--Text Styles-->
+        <Style x:Key="MainTitle_TextBlock_Style" TargetType="{x:Type TextBlock}">
+            <Setter Property="FontFamily" Value="{StaticResource Inter}"/>
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontSize" Value="24" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style x:Key="Regular_SubTitle_TextBlock_Style" TargetType="{x:Type CustomControls:CustomTextBlock}">
+            <Setter Property="FontFamily" Value="{StaticResource Inter}"/>
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="Light" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            <Style.Triggers>
+                <Trigger Property="ActiveState" Value="True">
+                    <Setter Property="Foreground" Value="#0096C7"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="Regular_Title_TextBlock_Style" TargetType="{x:Type CustomControls:CustomTextBlock}" BasedOn="{StaticResource Regular_SubTitle_TextBlock_Style}">
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <Style x:Key="StatusBar_Title_TextBlock_Style" TargetType="{x:Type CustomControls:CustomTextBlock}" BasedOn="{StaticResource Regular_Title_TextBlock_Style}">
+            <Setter Property="FontSize" Value="24" />
+        </Style>
+        <Style x:Key="TimeStatus_TextBlock_Style" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource MainTitle_TextBlock_Style}">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="#0096C7"/>
+        </Style>
+
+        <!--Buttons Templates-->
+        <Style x:Key="CircleButton_Simple_Style" TargetType="{x:Type CustomControls:ImageButton}">
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type CustomControls:ImageButton}">
+                        <Border
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            CornerRadius="90" SnapsToDevicePixels="true"
+                            Width="{TemplateBinding Width}"
+                            Height="{TemplateBinding Height}">
+
+                            <Grid>
+                                <ContentPresenter
+                                    x:Name="contentPresenter"
+                                    Margin="{TemplateBinding Padding}"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    Focusable="False" RecognizesAccessKey="True"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                <Border x:Name="border" 
+                                        CornerRadius="90"
+                                        Width="{TemplateBinding Width, Converter={StaticResource sizeDecreaserValueConverter}}"
+                                        Height="{TemplateBinding Height, Converter={StaticResource sizeDecreaserValueConverter}}"/>
+                                <Image Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" HorizontalAlignment="Center" VerticalAlignment="Center" Source="{Binding IconPath, RelativeSource={RelativeSource AncestorType=CustomControls:ImageButton}}"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="border" Property="Background" Value="#00B4D8" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter TargetName="border" Property="Background" Value="#0096C7" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SwitchButton_Simple_Style" TargetType="{x:Type CustomControls:SwitchButton}">
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type CustomControls:SwitchButton}">
+                        <Border
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            CornerRadius="90" SnapsToDevicePixels="true"
+                            Width="{TemplateBinding Width}"
+                            Height="{TemplateBinding Height}">
+                            <Grid>
+                                <ContentPresenter
+                                    x:Name="contentPresenter"
+                                    Margin="{TemplateBinding Padding}"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    Focusable="False" RecognizesAccessKey="True"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                <Border x:Name="border" 
+                                        CornerRadius="90"
+                                        Width="{TemplateBinding Width, Converter={StaticResource sizeDecreaserValueConverter}}"
+                                        Height="{TemplateBinding Height, Converter={StaticResource sizeDecreaserValueConverter}}"/>
+                                <Image Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Image.Style>
+                                        <Style TargetType="{x:Type Image}">
+                                            <Setter Property="Source" Value="{Binding UnactiveIconPath, RelativeSource={RelativeSource AncestorType=CustomControls:SwitchButton}}"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ActiveState, RelativeSource={RelativeSource AncestorType=CustomControls:SwitchButton}}" Value="True">
+                                                    <Setter Property="Source" Value="{Binding ActiveIconPath, RelativeSource={RelativeSource AncestorType=CustomControls:SwitchButton}}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding Path=(CustomControls:SwitchButton.ActiveState), RelativeSource={RelativeSource Self}}" Value="False"/>
+                                    <Condition Binding="{Binding Path=(CustomControls:SwitchButton.DoColorSwitch), RelativeSource={RelativeSource Self}}" Value="True"/>
+                                    <Condition Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True"/>
+                                </MultiDataTrigger.Conditions>
+                                <MultiDataTrigger.Setters>
+                                    <Setter TargetName="border" Property="Background" Value="#0096C7"/>
+                                </MultiDataTrigger.Setters>
+                            </MultiDataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding Path=(CustomControls:SwitchButton.ActiveState), RelativeSource={RelativeSource Self}}" Value="False"/>
+                                    <Condition Binding="{Binding Path=(CustomControls:SwitchButton.DoColorSwitch), RelativeSource={RelativeSource Self}}" Value="False"/>
+                                    <Condition Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True"/>
+                                </MultiDataTrigger.Conditions>
+                                <MultiDataTrigger.Setters>
+                                    <Setter TargetName="border" Property="Background" Value="White"/>
+                                </MultiDataTrigger.Setters>
+                            </MultiDataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding Path=(CustomControls:SwitchButton.ActiveState), RelativeSource={RelativeSource Self}}" Value="True"/>
+                                    <Condition Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True"/>
+                                </MultiDataTrigger.Conditions>
+                                <MultiDataTrigger.Setters>
+                                    <Setter TargetName="border" Property="Background" Value="White"/>
+                                </MultiDataTrigger.Setters>
+                            </MultiDataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <!--TextBox Templates-->
+        <Style x:Key="SearchField_TextBox_Style" TargetType="{x:Type CustomControls:CustomTextBox}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type CustomControls:CustomTextBox}">
+                        <Border 
+                            x:Name="border"
+                            Background="#495057"
+                            BorderBrush="#343A40"
+                            BorderThickness="2"
+                            CornerRadius="10"
+                            SnapsToDevicePixels="true">
+                            <Grid>
+                                <Image Width="20" Height="20" HorizontalAlignment="Left" Margin="4,0,0,0" Source="{Binding IconPath, RelativeSource={RelativeSource AncestorType=CustomControls:CustomTextBox}}"/>
+                                <TextBlock 
+                                    Margin="30,0,0,0" x:Name="hint" 
+                                    VerticalAlignment="Center" Foreground="#adadad"
+                                    Style="{StaticResource TimeStatus_TextBlock_Style}"
+                                    Visibility="{Binding Path=Text, ElementName=text, Converter={StaticResource textToVisibilityConverter}}"
+                                    Text="{Binding HintText, RelativeSource={RelativeSource AncestorType=CustomControls:CustomTextBox}}"/>
+                                <TextBox    
+                                    x:Name="text" Width="165" BorderThickness="0"
+                                    FontFamily="Inter" FontSize="12" FontWeight="SemiBold" Foreground="#0096C7"
+                                    Text="{Binding Path=Text, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=CustomControls:CustomTextBox}}" 
+                                    HorizontalAlignment="Left" VerticalAlignment="Center" Margin="28,0,0,0"
+                                    Background="Transparent"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#0096C7" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <!--ListBoxItem Templates-->
+        <DataTemplate x:Key="Songs_ListBoxItem_Template" DataType="{x:Type ListBoxItem}">
+            <Border x:Name="border" Background="Transparent" Width="600" Height="50" HorizontalAlignment="Left">
+                <Grid Height="50" Width="Auto">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="4*"/>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <CustomControls:SwitchButton
+                        Style="{StaticResource SwitchButton_Simple_Style}"
+                        Grid.Column="0"
+                        Width="28" Height="28"
+                        ActiveIconPath="/Icons/stop_blue.png"
+                        UnactiveIconPath="/Icons/play_white.png"
+                        Background="Transparent"
+                        MouseOverColor="#0096C7"
+                        Visibility="{Binding ElementName=border, Path=IsMouseOver, Converter={StaticResource boolToVisibilityConverter}}"
+                        Command="{Binding DataContext.PlayCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
+                        ActiveState="{Binding DataContext.IsPlayed, RelativeSource={RelativeSource Mode=Self}}"/>
+
+                    <CustomControls:CustomTextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0"
+                                                    Text="{Binding Number, StringFormat={}{0}. }" Style="{StaticResource Regular_SubTitle_TextBlock_Style}"
+                                                    ActiveState="{Binding IsPlayed}" 
+                                                    Visibility="{Binding ElementName=border, Path=IsMouseOver, Converter={StaticResource visibilityNotOperatorConverter}}"/>
+
+                    <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Orientation="Vertical">
+                        <CustomControls:CustomTextBlock Text="{Binding Title}" Style="{StaticResource Regular_Title_TextBlock_Style}">
+                            <CustomControls:CustomTextBlock.ActiveState>
+                                <MultiBinding Converter="{StaticResource orOperatorMultiConverter}">
+                                    <Binding ElementName="border" Path="IsMouseOver"/>
+                                    <Binding RelativeSource="{RelativeSource Mode=Self}" Path="DataContext.IsPlayed"/>
+                                </MultiBinding>
+                            </CustomControls:CustomTextBlock.ActiveState>
+                        </CustomControls:CustomTextBlock>
+                        <CustomControls:CustomTextBlock Text="{Binding Band}" Style="{StaticResource Regular_SubTitle_TextBlock_Style}">
+                            <CustomControls:CustomTextBlock.ActiveState>
+                                <MultiBinding Converter="{StaticResource orOperatorMultiConverter}">
+                                    <Binding ElementName="border" Path="IsMouseOver"/>
+                                    <Binding RelativeSource="{RelativeSource Mode=Self}" Path="DataContext.IsPlayed"/>
+                                </MultiBinding>
+                            </CustomControls:CustomTextBlock.ActiveState>
+                        </CustomControls:CustomTextBlock>
+                    </StackPanel>
+
+                    <CustomControls:CustomTextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="2"
+                                                    Text="{Binding Album}" Style="{StaticResource Regular_SubTitle_TextBlock_Style}">
+                        <CustomControls:CustomTextBlock.ActiveState>
+                            <MultiBinding Converter="{StaticResource orOperatorMultiConverter}">
+                                <Binding ElementName="border" Path="IsMouseOver"/>
+                                <Binding RelativeSource="{RelativeSource Mode=Self}" Path="DataContext.IsPlayed"/>
+                            </MultiBinding>
+                        </CustomControls:CustomTextBlock.ActiveState>
+                    </CustomControls:CustomTextBlock>
+
+                    <CustomControls:CustomTextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="3" Text="{Binding Genre}"
+                                                    Style="{StaticResource Regular_SubTitle_TextBlock_Style}">
+                        <CustomControls:CustomTextBlock.ActiveState>
+                            <MultiBinding Converter="{StaticResource orOperatorMultiConverter}">
+                                <Binding ElementName="border" Path="IsMouseOver"/>
+                                <Binding RelativeSource="{RelativeSource Mode=Self}" Path="DataContext.IsPlayed"/>
+                            </MultiBinding>
+                        </CustomControls:CustomTextBlock.ActiveState>
+                    </CustomControls:CustomTextBlock>
+
+                    <!--Like Button-->
+                    <CustomControls:SwitchButton
+                        Style="{StaticResource SwitchButton_Simple_Style}"
+                        Grid.Column="4"
+                        Width="28" Height="28"
+                        ActiveIconPath="/Icons/star_blue.png"
+                        UnactiveIconPath="/Icons/star_white.png"
+                        Background="Transparent"
+                        MouseOverColor="#1AC41C"
+                        Command="{Binding DataContext.LikeCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
+                        ActiveState="{Binding IsLiked, Mode=TwoWay}">
+                        <CustomControls:SwitchButton.Visibility>
+                            <MultiBinding Converter="{StaticResource likeButtonVisibilityMultiConverter}">
+                                <Binding ElementName="border" Path="IsMouseOver"/>
+                                <Binding Path="DataContext.IsLiked" RelativeSource="{RelativeSource Mode=Self}"/>
+                            </MultiBinding>
+                        </CustomControls:SwitchButton.Visibility>
+                    </CustomControls:SwitchButton>
+
+                    <CustomControls:CustomTextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="5" Text="{Binding Duration}" Style="{StaticResource Regular_SubTitle_TextBlock_Style}">
+                        <CustomControls:CustomTextBlock.ActiveState>
+                            <MultiBinding Converter="{StaticResource orOperatorMultiConverter}">
+                                <Binding ElementName="border" Path="IsMouseOver"/>
+                                <Binding RelativeSource="{RelativeSource Mode=Self}" Path="DataContext.IsPlayed"/>
+                            </MultiBinding>
+                        </CustomControls:CustomTextBlock.ActiveState>
+                    </CustomControls:CustomTextBlock>
+
+                    <CustomControls:ImageButton
+                        Grid.Column="6"
+                        VerticalAlignment="Center"
+                        Width="28" Height="28"
+                        Background="Transparent"
+                        Visibility="{Binding ElementName=border, Path=IsMouseOver, Converter={StaticResource boolToVisibilityConverter}}"
+                        IconPath="/Icons/cross_white.png"
+                        Style="{StaticResource CircleButton_Simple_Style}"
+                        Command="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"/>
+
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate x:Key="Liked_ListBoxItem_Template" DataType="{x:Type ListBoxItem}">
+            <Border x:Name="border" Background="Transparent" Width="220" Height="50">
+                <Grid Width="Auto" Height="50">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="4*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <CustomControls:SwitchButton
+                        Style="{StaticResource SwitchButton_Simple_Style}"
+                        Grid.Column="0"
+                        Width="28" Height="28"
+                        ActiveIconPath="/Icons/stop_blue.png"
+                        UnactiveIconPath="/Icons/play_white.png"
+                        Background="Transparent"
+                        MouseOverColor="#0096C7"
+                        Visibility="{Binding ElementName=border, Path=IsMouseOver, Converter={StaticResource boolToVisibilityConverter}}"
+                        Command="{Binding DataContext.PlayCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
+                        ActiveState="{Binding DataContext.IsPlayed, RelativeSource={RelativeSource Mode=Self}}"/>
+
+                    <CustomControls:CustomTextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0"
+                                Text="{Binding Number, StringFormat={}{0}. }" Style="{StaticResource Regular_SubTitle_TextBlock_Style}"
+                                ActiveState="{Binding IsPlayed}" 
+                                Visibility="{Binding ElementName=border, Path=IsMouseOver, Converter={StaticResource visibilityNotOperatorConverter}}"/>
+
+                    <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Orientation="Vertical">
+                        <CustomControls:CustomTextBlock Text="{Binding Title}" Style="{StaticResource Regular_Title_TextBlock_Style}">
+                            <CustomControls:CustomTextBlock.ActiveState>
+                                <MultiBinding Converter="{StaticResource orOperatorMultiConverter}">
+                                    <Binding ElementName="border" Path="IsMouseOver"/>
+                                    <Binding RelativeSource="{RelativeSource Mode=Self}" Path="DataContext.IsPlayed"/>
+                                </MultiBinding>
+                            </CustomControls:CustomTextBlock.ActiveState>
+                        </CustomControls:CustomTextBlock>
+                        <CustomControls:CustomTextBlock Text="{Binding Band}" Style="{StaticResource Regular_SubTitle_TextBlock_Style}">
+                            <CustomControls:CustomTextBlock.ActiveState>
+                                <MultiBinding Converter="{StaticResource orOperatorMultiConverter}">
+                                    <Binding ElementName="border" Path="IsMouseOver"/>
+                                    <Binding RelativeSource="{RelativeSource Mode=Self}" Path="DataContext.IsPlayed"/>
+                                </MultiBinding>
+                            </CustomControls:CustomTextBlock.ActiveState>
+                        </CustomControls:CustomTextBlock>
+                    </StackPanel>
+
+                    <!--Like Button-->
+                    <CustomControls:SwitchButton
+                        Style="{StaticResource SwitchButton_Simple_Style}"
+                        Grid.Column="2"
+                        Width="28" Height="28"
+                        ActiveIconPath="/Icons/star_blue.png"
+                        UnactiveIconPath="/Icons/star_white.png"
+                        Background="Transparent"
+                        MouseOverColor="#1AC41C"
+                        Command="{Binding DataContext.LikeCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
+                        ActiveState="{Binding IsLiked, Mode=TwoWay}"/>
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+
+        <!--Slider Templates-->
+        <ControlTemplate x:Key="SongState_Slider_Template">
+            <Grid VerticalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Track Grid.Row="1">
+                    <Track.DecreaseRepeatButton>
+                        <RepeatButton Command="Slider.DecreaseLarge">
+                            <RepeatButton.Style>
+                                <Style TargetType="{x:Type RepeatButton}">
+                                    <Setter Property="SnapsToDevicePixels" Value="True" />
+                                    <Setter Property="OverridesDefaultStyle" Value="True" />
+                                    <Setter Property="IsTabStop" Value="False" />
+                                    <Setter Property="Focusable" Value="False" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="RepeatButton">
+                                                <Border BorderThickness="1" BorderBrush="#0096C7" Background="#0096C7" Height="3"/>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </RepeatButton.Style>
+                        </RepeatButton>
+                    </Track.DecreaseRepeatButton>
+                    <Track.Thumb>
+                        <Thumb>
+                            <Thumb.Style>
+                                <Style TargetType="{x:Type Thumb}">
+                                    <Setter Property="SnapsToDevicePixels" Value="True"/>
+                                    <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Thumb">
+                                                <Ellipse Width="10" Height="10" Fill="#0096C7"/>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Thumb.Style>
+                        </Thumb>
+                    </Track.Thumb>
+                    <Track.IncreaseRepeatButton>
+                        <RepeatButton Command="Slider.IncreaseLarge">
+                            <RepeatButton.Style>
+                                <Style TargetType="{x:Type RepeatButton}">
+                                    <Setter Property="SnapsToDevicePixels" Value="True" />
+                                    <Setter Property="OverridesDefaultStyle" Value="True" />
+                                    <Setter Property="IsTabStop" Value="False" />
+                                    <Setter Property="Focusable" Value="False" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="RepeatButton">
+                                                <Border BorderThickness="1" BorderBrush="#495057" Background="#495057" Height="3"/>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </RepeatButton.Style>
+                        </RepeatButton>
+                    </Track.IncreaseRepeatButton>
+                </Track>
+            </Grid>
+        </ControlTemplate>
+
+
+        <!--ScrollViewer-->
+        <ControlTemplate x:Key="VerticalScrollBar" TargetType="{x:Type ScrollBar}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Track x:Name="PART_Track" Grid.Row="0" IsDirectionReversed="true">
+                    <Track.Thumb>
+                        <Thumb Margin="1,0,1,0">
+                            <Thumb.Style>
+                                <Style TargetType="{x:Type Thumb}">
+                                    <Setter Property="SnapsToDevicePixels" Value="True" />
+                                    <Setter Property="OverridesDefaultStyle" Value="true" />
+                                    <Setter Property="IsTabStop" Value="false" />
+                                    <Setter Property="Focusable" Value="false" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type Thumb}">
+                                                <Border Background="#343A40"/>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Thumb.Style>
+                        </Thumb>
+                    </Track.Thumb>
+                </Track>
+            </Grid>
+        </ControlTemplate>
+
+        <Style x:Key="ScrollBar_Style" TargetType="{x:Type ScrollBar}">
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Style.Triggers>
+                <Trigger Property="Orientation" Value="Vertical">
+                    <Setter Property="Width" Value="18" />
+                    <Setter Property="Height" Value="Auto" />
+                    <Setter Property="Template" Value="{StaticResource VerticalScrollBar}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ScrollViewer_Style" TargetType="{x:Type ScrollViewer}">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Border Grid.Column="0" BorderThickness="0,0,0,0" BorderBrush="Transparent">
+                                <ScrollContentPresenter CanContentScroll="{TemplateBinding CanContentScroll}" />
+                            </Border>
+                            <ScrollBar Grid.Column="1" HorizontalAlignment="Right" x:Name="PART_VerticalScrollBar"
+                                        Value="{TemplateBinding VerticalOffset}"
+                                        Maximum="{TemplateBinding ScrollableHeight}"
+                                        ViewportSize="{TemplateBinding ViewportHeight}"
+                                        Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
+                                        Style="{StaticResource ScrollBar_Style}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+    </Window.Resources>
+
+    <Grid Background="#212529">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="76"/>
+            <RowDefinition Height="2"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="2"/>
+            <RowDefinition Height="68"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1.13*"/>
+            <ColumnDefinition Width="2"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+
+
+        <!--separators-->
+        <Border Grid.Row="0" Grid.Column="1" Grid.RowSpan="4" Background="#495057" CornerRadius="1" Margin="0,2,0,2"/>
+        <Border Grid.Row="1" Grid.Column="0" Background="#495057" CornerRadius="1" Margin="2,0,2,0"/>
+        <Border Grid.Row="1" Grid.Column="2" Background="#495057" CornerRadius="1" Margin="2,0,2,0"/>
+        <Border Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Background="#495057" CornerRadius="1" Margin="2,0,2,0"/>
+
+
+        <!--hints-->
+        <Grid Margin="4,0,0,0" Grid.Row="2" Grid.Column="0" Width="220" HorizontalAlignment="Left">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.9*"/>
+                <ColumnDefinition Width="2"/>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="2"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" Style="{StaticResource TimeStatus_TextBlock_Style}" Text="№" HorizontalAlignment="Center"/>
+            <Border Grid.Column="1" Background="#495057" CornerRadius="1" Margin="0,2,0,2"/>
+            <TextBlock Grid.Column="2" Style="{StaticResource TimeStatus_TextBlock_Style}" Text="назва" HorizontalAlignment="Center"/>
+        </Grid>
+        
+        <Grid Grid.Row="2" Grid.Column="2" Width="620" HorizontalAlignment="Left">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="2"/>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="2"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="2"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="2"/>
+                <ColumnDefinition Width="1.4*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Style="{StaticResource TimeStatus_TextBlock_Style}" Text="№" HorizontalAlignment="Center"/>
+            <Border Grid.Column="1" Background="#495057" CornerRadius="1" Margin="0,2,0,2"/>
+            <TextBlock Grid.Column="2" Style="{StaticResource TimeStatus_TextBlock_Style}" Text="назва" HorizontalAlignment="Center"/>
+            <Border Grid.Column="3" Background="#495057" CornerRadius="1" Margin="0,2,0,2"/>
+            <TextBlock Grid.Column="4" Style="{StaticResource TimeStatus_TextBlock_Style}" Text="альбом" HorizontalAlignment="Center"/>
+            <Border Grid.Column="5" Background="#495057" CornerRadius="1" Margin="0,2,0,2"/>
+            <TextBlock Grid.Column="6" Style="{StaticResource TimeStatus_TextBlock_Style}" Text="жанр" HorizontalAlignment="Center"/>
+            <Border Grid.Column="9" Background="#495057" CornerRadius="1" Margin="0,2,0,2"/>
+            <TextBlock Grid.Column="10" Style="{StaticResource TimeStatus_TextBlock_Style}" Text="час" HorizontalAlignment="Center"/>
+            <Border Grid.Column="11" Background="#495057" CornerRadius="1" Margin="0,2,0,2"/>
+            <TextBlock Grid.Column="12" Style="{StaticResource TimeStatus_TextBlock_Style}" Text="видалити" HorizontalAlignment="Center"/>
+        </Grid>
+        
+        
+        <!--Liked-->
+        <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="12" Text="Улюблені" Style="{StaticResource MainTitle_TextBlock_Style}"/>
+        <ScrollViewer Background="Transparent" Margin="2" Grid.Row="3" Grid.Column="0" BorderThickness="5" VerticalScrollBarVisibility="Visible" Style="{StaticResource ScrollViewer_Style}">
+            <ItemsControl ItemsSource="{Binding LikedItems}" ItemTemplate="{StaticResource Liked_ListBoxItem_Template}"/>
+        </ScrollViewer>
+
+
+        <!--Songs-->
+        <Grid Grid.Row="0" Grid.Column="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="12" Text="Пісні" Style="{StaticResource MainTitle_TextBlock_Style}"/>
+            <StackPanel Orientation="Vertical" Grid.Column="2" HorizontalAlignment="Right" Margin="0,0,12,0">
+                <CustomControls:ImageButton
+                    VerticalAlignment="Center"
+                    Margin="2"
+                    Width="32" Height="32"
+                    Background="Transparent"
+                    IconPath="/Icons/load_white.png"
+                    Style="{StaticResource CircleButton_Simple_Style}"
+                    Command="{Binding LoadCommand}"
+                    CommandParameter="{StaticResource True}"/>
+                <CustomControls:ImageButton
+                    VerticalAlignment="Center"
+                    Margin="2"
+                    Width="32" Height="32"
+                    Background="Transparent"
+                    IconPath="/Icons/add_white.png"
+                    Style="{StaticResource CircleButton_Simple_Style}"
+                    Command="{Binding LoadCommand}"
+                    CommandParameter="{StaticResource False}"/>
+            </StackPanel>
+            <CustomControls:CustomTextBox 
+                x:Name="test"
+                Grid.Column="1"
+                Width="200" Height="30"
+                Style="{StaticResource SearchField_TextBox_Style}"
+                HintText="Шукати за назвою"
+                IconPath="/Icons/icon_search.png"
+                Text="{Binding SearchField, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+
+        <ScrollViewer Background="Transparent" Margin="2" Grid.Row="3" Grid.Column="2" BorderThickness="5" VerticalScrollBarVisibility="Visible" Style="{StaticResource ScrollViewer_Style}">
+            <ItemsControl x:Name="songsListBox" ItemsSource="{Binding SongItems}" ItemTemplate="{StaticResource Songs_ListBoxItem_Template}"/>
+        </ScrollViewer>
+
+
+        <!--Footer-->
+        <Expander Grid.Row="3" Grid.RowSpan="3" Grid.Column="0" ExpandDirection="Up" Background="Transparent" Margin="3,0,3,10.5" IsExpanded="False" VerticalAlignment="Bottom" HorizontalAlignment="Left">
+            <Expander.Header>
+                <StackPanel Margin="0,8,0,0" Orientation="Vertical">
+                    <CustomControls:CustomTextBlock Margin="12,0,0,0" Text="{Binding PlayedSong.Title}" ActiveState="True" Style="{StaticResource StatusBar_Title_TextBlock_Style}"/>
+                    <CustomControls:CustomTextBlock Margin="12,0,0,0" Text="{Binding PlayedSong.Band}" ActiveState="True" Style="{StaticResource Regular_SubTitle_TextBlock_Style}"/>
+                </StackPanel>
+            </Expander.Header>
+            <Border MinWidth="128" MinHeight="128" Background="WhiteSmoke" HorizontalAlignment="Left" BorderThickness="4" BorderBrush="#0096C7" CornerRadius="3">
+                <Image HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Image.Style>
+                        <Style TargetType="{x:Type Image}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding PlayedSong.IsPlayed}" Value="True">
+                                    <DataTrigger.Setters>
+                                        <Setter Property="Width" Value="Auto"/>
+                                        <Setter Property="Height" Value="Auto"/>
+                                        <Setter Property="Source" Value="{Binding PlayedSong.Image}"/>
+                                    </DataTrigger.Setters>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding PlayedSong.IsPlayed}" Value="False">
+                                    <DataTrigger.Setters>
+                                        <Setter Property="Width" Value="64"/>
+                                        <Setter Property="Height" Value="64"/>
+                                        <Setter Property="Source" Value="/Icons/icon_not_found_picture.png"/>
+                                    </DataTrigger.Setters>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
+            </Border>
+        </Expander>
+        <Grid Grid.Row="5" Grid.Column="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <CustomControls:CustomMediaElement Source="{Binding PlayedSong.FilePath}" 
+                                               Controller="{Binding Controller, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}" 
+                                               LoadedBehavior="Manual" UnloadedBehavior="Manual" />
+            
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0">
+                <TextBlock Text="{Binding Controller.SecondsProgress, Converter={StaticResource doubleToTimeConverter}, NotifyOnTargetUpdated=True}" Style="{StaticResource TimeStatus_TextBlock_Style}"/>
+                <Slider Minimum="0" Maximum="{Binding Controller.SecondsMaximum}" Width="300" Margin="12,0,12,0"
+                        Value="{Binding Controller.SecondsProgress}" IsEnabled="False"
+                        Template="{StaticResource SongState_Slider_Template}"/>
+
+                <TextBlock Text="{Binding PlayedSong.Duration, Converter={StaticResource durationTextToTextConverter}}"  Style="{StaticResource TimeStatus_TextBlock_Style}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <!--shuffle-->
+                <CustomControls:SwitchButton
+                    Style="{StaticResource SwitchButton_Simple_Style}"
+                    Grid.Column="0"
+                    Width="28" Height="28"
+                    ActiveIconPath="/Icons/shuffle_blue.png"
+                    UnactiveIconPath="/Icons/shuffle_white.png"
+                    Background="Transparent"
+                    MouseOverColor="#0096C7"
+                    Command="{Binding DataContext.ShuffleCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                    ActiveState="{Binding DataContext.ShuffleState, RelativeSource={RelativeSource AncestorType=Window}}"/>
+
+                <!--prev-->
+                <CustomControls:ImageButton
+                    Style="{StaticResource CircleButton_Simple_Style}"
+                    Grid.Column="7"
+                    VerticalAlignment="Center"
+                    Margin="4"
+                    Width="28" Height="28"
+                    Background="Transparent"
+                    Visibility="{Binding ElementName=border, Path=IsMouseOver, Converter={StaticResource boolToVisibilityConverter}}"
+                    IconPath="/Icons/prev_white.png"
+                    Command="{Binding DataContext.PrevCommand, RelativeSource={RelativeSource AncestorType=Window}}"/>
+
+                <!--play/pause-->
+                <CustomControls:SwitchButton
+                    Style="{StaticResource SwitchButton_Simple_Style}"
+                    Grid.Column="0"
+                    Width="40" Height="40"
+                    ActiveIconPath="/Icons/play_blue.png"
+                    UnactiveIconPath="/Icons/pause_blue.png"
+                    Background="Transparent"
+                    MouseOverColor="White"
+                    DoColorSwitch="False"
+                    ActiveState="{Binding DataContext.CurrentPauseState, RelativeSource={RelativeSource AncestorType=Window}}"
+                    Command="{Binding DataContext.PlayPauseCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"/>
+
+                <!--next-->
+                <CustomControls:ImageButton
+                    Style="{StaticResource CircleButton_Simple_Style}"
+                    Grid.Column="7"
+                    VerticalAlignment="Center"
+                    Margin="4"
+                    Width="28" Height="28"
+                    Background="Transparent"
+                    Visibility="{Binding ElementName=border, Path=IsMouseOver, Converter={StaticResource boolToVisibilityConverter}}"
+                    IconPath="/Icons/next_white.png"
+                    Command="{Binding DataContext.NextCommand, RelativeSource={RelativeSource AncestorType=Window}}"/>
+
+                <!--repeat-->
+                <CustomControls:SwitchButton
+                    Style="{StaticResource SwitchButton_Simple_Style}"
+                    Grid.Column="0"
+                    Width="28" Height="28"
+                    ActiveIconPath="/Icons/repeat_blue.png"
+                    UnactiveIconPath="/Icons/repeat_white.png"
+                    Background="Transparent"
+                    MouseOverColor="#0096C7"
+                    Command="{Binding DataContext.RepeatCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                    ActiveState="{Binding DataContext.DoRepeat, RelativeSource={RelativeSource AncestorType=Window}}"/>
+
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>
